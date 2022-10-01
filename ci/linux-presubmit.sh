@@ -67,46 +67,7 @@ for cc in /usr/local/bin/gcc /opt/llvm/clang/bin/clang; do
 done
 
 # Do one test with an older version of GCC
-time docker run \
-  --volume="${GTEST_ROOT}:/src:ro" \
-  --workdir="/src" \
-  --rm \
-  --env="CC=/usr/local/bin/gcc" \
-  --env="BAZEL_CXXOPTS=-std=c++14" \
-  ${LINUX_GCC_FLOOR_CONTAINER} \
-    /usr/local/bin/bazel test ... \
-      --copt="-Wall" \
-      --copt="-Werror" \
-      --copt="-Wuninitialized" \
-      --copt="-Wno-error=pragmas" \
-      --distdir="/bazel-distdir" \
-      --features=external_include_paths \
-      --keep_going \
-      --show_timestamps \
-      --test_output=errors
 
-# Test GCC
-for std in ${STD}; do
-  for absl in 0 1; do
-    time docker run \
-      --volume="${GTEST_ROOT}:/src:ro" \
-      --workdir="/src" \
-      --rm \
-      --env="CC=/usr/local/bin/gcc" \
-      --env="BAZEL_CXXOPTS=-std=${std}" \
-      ${LINUX_LATEST_CONTAINER} \
-      /usr/local/bin/bazel test ... \
-        --copt="-Wall" \
-        --copt="-Werror" \
-        --copt="-Wuninitialized" \
-        --define="absl=${absl}" \
-        --distdir="/bazel-distdir" \
-        --features=external_include_paths \
-        --keep_going \
-        --show_timestamps \
-        --test_output=errors
-  done
-done
 
 # Test Clang
 for std in ${STD}; do
